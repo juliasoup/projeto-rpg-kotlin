@@ -1,6 +1,6 @@
 package org.example.racas
 
-class elfo : Raca("Elfo\n",
+class elfo : Raca("Elfo",
         "Esguios, franzinos e mais baixos comparados com um humano, possuem cabelos compridos com orelhas longas e pontudas.\n" +
                 " São frios e prepotentes com dificuldades de criar laços de amizade\n",
         "Percepção natural: percepção especial no que diz respeito a portas e passagens não convencionais e até mesmo secretas.\n" +
@@ -9,6 +9,8 @@ class elfo : Raca("Elfo\n",
                 "Imunidade: imunes a efeitos ou magias que envolvam sono e também contra a paralisia causada por um Ghoul. ") {
 
     override fun exibirInfos() {
-        println("Elfo - Nome: $nome, Físico: $fisico, Habilidade: $habilidade")
+        println("Nome: $nome")
+        println("Físico: $fisico")
+        println("Habilidades: $habilidade")
     }
 }
