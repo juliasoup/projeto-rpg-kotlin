@@ -57,7 +57,7 @@ fun main() {
 
 
     println("\nDigite o nome do personagem:")
-    scanner.nextLine() // consumir quebra de linha
+    scanner.nextLine() 
     val nome = scanner.nextLine()
 
 
