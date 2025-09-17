@@ -1,7 +1,12 @@
-import personagem.Personagem
-import racas.*
-import classes.*
-import utils.*
+import models.personagem.Personagem
+import models.classes.Bardo
+import models.classes.Druida
+import models.classes.Mago
+import models.racas.Elfo
+import models.racas.Humano
+import models.racas.MeioDemonio
+import models.utils.EstiloDistribuicao
+import models.utils.GeradorAtributos
 import java.util.Scanner
 
 fun main() {
@@ -57,7 +62,7 @@ fun main() {
 
 
     println("\nDigite o nome do personagem:")
-    scanner.nextLine() 
+    scanner.nextLine() // consumir quebra de linha
     val nome = scanner.nextLine()
 
 
