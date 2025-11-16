@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import com.example.ktrpg.R
 
 object NotificationHelper {
 
@@ -16,7 +15,7 @@ object NotificationHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Battle Notifications"
             val descriptionText = "Notifications for battle status"
-            val importance = NotificationManager.IMPORTANCE_LOW
+            val importance = NotificationManager.IMPORTANCE_DEFAULT // << MUDANÇA AQUI
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
@@ -30,7 +29,7 @@ object NotificationHelper {
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle("Batalha em Andamento")
             .setContentText("A simulação de batalha está rodando.")
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // Substitua por um ícone adequado
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setOngoing(true)
             .build()
     }
@@ -39,11 +38,11 @@ object NotificationHelper {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle("Seu Personagem Morreu")
             .setContentText("O personagem principal foi derrotado em batalha.")
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // Substitua por um ícone adequado
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .build()
 
         val notificationManager: NotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(2, notification) // ID 2 para esta notificação
+        notificationManager.notify(2, notification)
     }
 }
