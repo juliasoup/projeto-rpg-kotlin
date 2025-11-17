@@ -2,45 +2,86 @@ package com.example.ktrpg.battle
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.ktrpg.models.personagem.PlayerCharacter
 import kotlin.random.Random
+
+enum class BattleTurn {
+    PLAYER_CHOICE, // Jogador escolhe Acar ou Defender
+    ENEMY_TURN     // Inimigo ataca
+}
 
 class BattleViewModel : ViewModel() {
 
-    val playerHp = mutableStateOf(100)
+    // O personagem do jogador será passado para o ViewModel
+    var player: PlayerCharacter = PlayerCharacter()
+
     val enemyHp = mutableStateOf(100)
-    val battleLog = mutableStateOf(listOf("Um inimigo apareceu!"))
+    val battleLog = mutableStateOf(listOf<String>())
+    val turn = mutableStateOf(BattleTurn.PLAYER_CHOICE)
     val isBattleOver = mutableStateOf(false)
 
-    fun attack() {
-        if (isBattleOver.value) return
+    fun startNewBattle(playerCharacter: PlayerCharacter) {
+        this.player = playerCharacter
+        this.player.currentHp = player.maxHp // Recupera a vida no início de cada batalha
+        this.player.isDefending = false
 
-        // Player attacks
-        val playerDamage = Random.nextInt(5, 15)
-        enemyHp.value = (enemyHp.value - playerDamage).coerceAtLeast(0)
-        addToLog("Você ataca e causa $playerDamage de dano.")
+        enemyHp.value = 100
+        battleLog.value = listOf("Um novo inimigo apareceu! Nível: ${player.level}")
+        turn.value = BattleTurn.PLAYER_CHOICE
+        isBattleOver.value = false
+    }
 
-        if (enemyHp.value <= 0) {
-            addToLog("Você venceu a batalha!")
-            isBattleOver.value = true
-            return
+    fun playerAction(attack: Boolean) {
+        if (turn.value != BattleTurn.PLAYER_CHOICE || isBattleOver.value) return
+
+        if (attack) {
+            val playerDamage = Random.nextInt(10, 20) + (player.level * 2)
+            enemyHp.value = (enemyHp.value - playerDamage).coerceAtLeast(0)
+            addToLog("Você ataca e causa $playerDamage de dano.")
+        } else {
+            player.isDefending = true
+            addToLog("Você se prepara para defender.")
         }
 
-        // Enemy attacks
-        val enemyDamage = Random.nextInt(3, 10)
-        playerHp.value = (playerHp.value - enemyDamage).coerceAtLeast(0)
-        addToLog("O inimigo ataca e causa $enemyDamage de dano.")
-
-        if (playerHp.value <= 0) {
-            addToLog("Você foi derrotado!")
-            isBattleOver.value = true
+        if (enemyHp.value <= 0) {
+            endBattle(victory = true)
+        } else {
+            turn.value = BattleTurn.ENEMY_TURN
+            enemyTurn()
         }
     }
 
-    fun resetBattle() {
-        playerHp.value = 100
-        enemyHp.value = 100
-        battleLog.value = listOf("Um novo inimigo apareceu!")
-        isBattleOver.value = false
+    private fun enemyTurn() {
+        if (isBattleOver.value) return
+
+        addToLog("O inimigo se prepara para atacar!")
+
+        val enemyDamage = Random.nextInt(15, 25)
+        val finalDamage = if (player.isDefending) (enemyDamage / 2) else enemyDamage
+
+        player.currentHp = (player.currentHp - finalDamage).coerceAtLeast(0)
+        addToLog("O inimigo ataca e causa $finalDamage de dano.")
+
+        // Reseta a defesa do jogador para o próximo turno
+        player.isDefending = false
+
+        if (player.currentHp <= 0) {
+            endBattle(victory = false)
+        } else {
+            turn.value = BattleTurn.PLAYER_CHOICE
+            addToLog("Sua vez! O que você faz?")
+        }
+    }
+
+    private fun endBattle(victory: Boolean) {
+        isBattleOver.value = true
+        if (victory) {
+            val xpGained = 30 + (player.level * 5)
+            addToLog("Você venceu! Você ganhou $xpGained de XP.")
+            player.gainXp(xpGained)
+        } else {
+            addToLog("Você foi derrotado!")
+        }
     }
 
     private fun addToLog(message: String) {

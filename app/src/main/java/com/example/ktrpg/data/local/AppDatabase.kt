@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Character::class], version = 1, exportSchema = false)
+@Database(entities = [CharacterEntity::class], version = 1, exportSchema = false) // << CORREÇÃO AQUI
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun characterDao(): CharacterDao
